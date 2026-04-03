@@ -108,7 +108,7 @@ else
 endif
 
 # Main Recipes
-.PHONY: all archive build changelog dep fmt gendoc help install lint logview publish run start stop test version vet watch
+.PHONY: all archive build changelog coverage-report dep fmt gendoc help install lint logview publish run start stop test version vet watch
 
 help: Makefile; ## Display this help
 	@$P "$(PROJECT) version $(VERSION) build " $(BUILD) " in $(BRANCH) branch"
