@@ -107,6 +107,8 @@ Tests use `github.com/stretchr/testify/suite`. Each package has a `*_test.go` in
 | `github.com/gildas/go-flags` | `EnumFlag`, `EnumSliceFlag` for validated flag values with tab completion |
 | `github.com/go-git/go-git/v5` | Reading local git config (workspace/repo auto-detection) |
 | `github.com/zalando/go-keyring` | OS keyring for credential storage |
+| `github.com/gildas/go-core` | Utility helpers: `Map`, `Filter`, `Sort`, `GetEnvAsString`, etc. |
+| `gopkg.in/yaml.v3` | YAML marshaling (config file read/write) |
 
 ## Linting
 
