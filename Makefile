@@ -188,7 +188,20 @@ test-failfast: ARGS=-failfast                 ## Run the Unit Tests and stop aft
 test-race:     ARGS=-race                     ## Run the Unit Tests with race detector
 $(TEST_TARGETS): NAME=$(MAKECMDGOALS:test-%=%)
 $(TEST_TARGETS): test
-test: $(COVERAGE_HTML); $(info $(M) Running $(NAME:%=% )tests...) @ ## Run the Unit Tests (make test what='TestSuite/TestMe')
+test tests: ; $(info $(M) Running $(NAME:%=% )tests...) @ ## Run the Unit Tests (make test what='TestSuite/TestMe')
+	$Q mkdir -p $(COV_DIR)
+	$Q $(GO) test \
+			-timeout $(TEST_TIMEOUT)s \
+			-covermode=$(COVERAGE_MODE) \
+			-coverprofile=$(COVERAGE_OUT) \
+			-v $(ARGS) $(TEST_ARG) ./...
+	$Q $(GO) tool cover -html=$(COVERAGE_OUT) -o $(COVERAGE_HTML)
+	$Q if [ -x "$(GOCOV)" ] && [ -x "$(GOCOVXML)" ]; then \
+		$(GOCOV) convert $(COVERAGE_OUT) | $(GOCOVXML) > $(COVERAGE_XML); \
+	fi
+
+coverage-report: test | coverage-tools; @ ## Generate XML coverage report (requires gocov/gocov-xml)
+	$Q $(GOCOV) convert $(COVERAGE_OUT) | $(GOCOVXML) > $(COVERAGE_XML)
 
 test-ci:; @ ## Run the unit tests continuously
 	$Q $(MAKE) --no-print-directory watch run="make test"
@@ -378,6 +391,16 @@ watch: $(TMP_DIR); @ ## Run a command continuously: make watch run="go test"
 	  --exec "$(run) || exit 1"
 
 # Download recipes
+.PHONY: watch-tools coverage-tools
+$(BIN_DIR)/chglog:    PACKAGE=github.com/goreleaser/chglog/cmd/chglog@latest
+$(BIN_DIR)/yolo:      PACKAGE=github.com/azer/yolo@latest
+$(BIN_DIR)/gocov:     PACKAGE=github.com/axw/gocov/gocov@latest
+$(BIN_DIR)/gocov-xml: PACKAGE=github.com/AlekSi/gocov-xml@latest
+$(BIN_DIR)/nfpm:      PACKAGE=github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+$(BIN_DIR)/gomplate:  PACKAGE=github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest
+
+watch-tools:    | $(YOLO)
+coverage-tools: | $(GOCOV) $(GOCOVXML)
+
 $(BIN_DIR)/%: | $(BIN_DIR) ; $(info $(M) installing $(PACKAGE)...)
-	$Q env GOBIN=$(BIN_DIR) $(GO) install $(PACKAGE) || status=$$? ; \
-	  exit $$status
+	$Q env GOBIN=$(BIN_DIR) $(GO) install $(PACKAGE)
