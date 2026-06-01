@@ -44,6 +44,7 @@ TEST_TIMEOUT  ?= 30
 COVERAGE_MODE ?= count
 COVERAGE_OUT  := $(COV_DIR)/coverage.out
 COVERAGE_HTML := $(COV_DIR)/index.html
+COVERAGE_XML  := $(COV_DIR)/coverage.xml
 
 # Tools
 GO      ?= go
@@ -51,6 +52,9 @@ GOOS    != $(GO) env GOOS
 LOGGER   =  bunyan -L -o short
 GOBIN    = $(BIN_DIR)
 GOLINT  ?= golangci-lint
+YOLO     = $(BIN_DIR)/yolo
+GOCOV    = $(BIN_DIR)/gocov
+GOCOVXML = $(BIN_DIR)/gocov-xml
 NFPM     = nfpm
 GOMPLATE = gomplate
 PANDOC  ?= pandoc
