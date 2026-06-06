@@ -204,7 +204,7 @@ test tests: ; $(info $(M) Running $(NAME:%=% )tests...) @ ## Run the Unit Tests 
 		$(GOCOV) convert $(COVERAGE_OUT) | $(GOCOVXML) > $(COVERAGE_XML); \
 	fi
 
-coverage-report: test | coverage-tools; @ ## Generate XML coverage report (requires gocov/gocov-xml)
+coverage-report: $(COVERAGE_OUT) | coverage-tools; @ ## Generate XML coverage report (requires gocov/gocov-xml)
 	$Q $(GOCOV) convert $(COVERAGE_OUT) | $(GOCOVXML) > $(COVERAGE_XML)
 
 test-ci:; @ ## Run the unit tests continuously
